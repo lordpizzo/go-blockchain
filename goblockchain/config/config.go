@@ -1,0 +1,7 @@
+package config
+
+const (
+	MINING_DIFICULT = 3
+	MINING_SENDER   = "THE BLOCKCHAIN"
+	MINING_REWARD   = 1.0
+)
