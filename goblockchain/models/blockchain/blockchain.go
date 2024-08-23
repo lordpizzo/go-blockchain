@@ -1,8 +1,12 @@
-package models
+package blockchain
 
 import (
+	"crypto/ecdsa"
+	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"goblockchain/config"
+	"goblockchain/utils"
 	"log"
 	"strings"
 )
@@ -40,9 +44,32 @@ func (bc *Blockchain) Print() {
 	fmt.Printf("%s \n", strings.Repeat("*", 25))
 }
 
-func (bc *Blockchain) AddTransaction(sender string, recipent string, value float32) {
+func (bc *Blockchain) AddTransaction(sender string, recipent string, value float32, senderPublicKey *ecdsa.PublicKey, s *utils.Signature) bool {
 	t := NewTransaction(sender, recipent, value)
 	bc.transactionPool = append(bc.transactionPool, t)
+
+	if sender == config.MINING_SENDER {
+		bc.transactionPool = append(bc.transactionPool, t)
+		return true
+	}
+
+	if bc.VerifyTransactionSignature(senderPublicKey, s, t) {
+		if bc.CalculateTotalAmount(sender) < value {
+			log.Println("ERROR: Not enough funds")
+			return false
+		}
+		bc.transactionPool = append(bc.transactionPool, t)
+		return true
+	} else {
+		log.Println("ERROR: Invalid signature")
+	}
+	return false
+}
+
+func (bc *Blockchain) VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKey, s *utils.Signature, t *Transaction) bool {
+	m, _ := json.Marshal(t)
+	h := sha256.Sum256([]byte(m))
+	return ecdsa.Verify(senderPublicKey, h[:], s.R, s.S)
 }
 
 func (bc *Blockchain) CopyTransactionPool() []*Transaction {
@@ -71,7 +98,7 @@ func (bc *Blockchain) ProofOfWork() int {
 }
 
 func (bc *Blockchain) Mining() bool {
-	bc.AddTransaction(config.MINING_SENDER, bc.blockchainAddress, config.MINING_REWARD)
+	bc.AddTransaction(config.MINING_SENDER, bc.blockchainAddress, config.MINING_REWARD, nil, nil)
 	nonce := bc.ProofOfWork()
 	previousHash := bc.LastBlock().Hash()
 	bc.CreateBlock(nonce, previousHash)
