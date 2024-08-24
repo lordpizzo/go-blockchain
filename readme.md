@@ -1,6 +1,6 @@
 # My First Blockchain in Go
 
-Here i'll build my fisrt blockchain in go.
+Only for studying and learning about blockchain. Do not use this code in production.
 
 ## How to run this code?
 
