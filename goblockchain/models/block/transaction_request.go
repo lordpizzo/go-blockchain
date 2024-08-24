@@ -1,6 +1,7 @@
 package block
 
 type TransactionRequest struct {
+	TxID                       *string  `json:"txid"`
 	SenderBlockchainAddress    *string  `json:"sender_blockchain_address"`
 	RecipientBlockchainAddress *string  `json:"recipient_blockchain_address"`
 	SenderPublicKey            *string  `json:"sender_public_key"`

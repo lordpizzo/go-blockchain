@@ -1,6 +1,7 @@
 package wallet
 
 type TransactionRequest struct {
+	TxID                       *string `json:"txid"`
 	SenderPrivateKey           *string `json:"sender_private_key"`
 	SenderBlockchainAddress    *string `json:"sender_blockchain_address"`
 	RecipientBlockchainAddress *string `json:"recipient_blockchain_address"`

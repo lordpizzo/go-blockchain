@@ -2,6 +2,7 @@ package block
 
 import (
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -21,6 +22,18 @@ func NewBlock(nonce int, previousHash [32]byte, transactions []*Transaction) *Bl
 	b.previousHash = previousHash
 	b.transactions = transactions
 	return b
+}
+
+func (b *Block) PreviousHash() [32]byte {
+	return b.previousHash
+}
+
+func (b *Block) Transactions() []*Transaction {
+	return b.transactions
+}
+
+func (b *Block) Nonce() int {
+	return b.nonce
 }
 
 func (b *Block) Print() {
@@ -49,4 +62,26 @@ func (b *Block) MarshalJSON() ([]byte, error) {
 		PreviousHash: fmt.Sprintf("%x", b.previousHash),
 		Transactions: b.transactions,
 	})
+}
+
+func (b *Block) UnmarshalJSON(data []byte) error {
+	var previousHash string
+	v := &struct {
+		Timestamp    *int64          `json:"timestamp"`
+		Nonce        *int            `json:"nonce"`
+		PreviousHash *string         `json:"previous_hash"`
+		Transactions *[]*Transaction `json:"transactions"`
+	}{
+		Timestamp:    &b.timestamp,
+		Nonce:        &b.nonce,
+		PreviousHash: &previousHash,
+		Transactions: &b.transactions,
+	}
+	err := json.Unmarshal(data, &v)
+	if err != nil {
+		return err
+	}
+	ph, _ := hex.DecodeString(previousHash)
+	copy(b.previousHash[:], ph[:32])
+	return nil
 }
