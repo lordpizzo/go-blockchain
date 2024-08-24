@@ -1,4 +1,4 @@
-package blockchain
+package block
 
 import (
 	"encoding/json"
@@ -9,18 +9,18 @@ import (
 type Transaction struct {
 	senderBlockchainAddress    string
 	recipientBlockchainAddress string
-	chanvalue                  float32
+	value                      float32
 }
 
-func NewTransaction(sender string, recipent string, value float32) *Transaction {
-	return &Transaction{sender, recipent, value}
+func NewTransaction(sender string, recipient string, value float32) *Transaction {
+	return &Transaction{sender, recipient, value}
 }
 
 func (t *Transaction) Print() {
 	fmt.Printf("%s\n", strings.Repeat("-", 40))
-	fmt.Printf(" sender_blockchain_address:    %s\n", t.senderBlockchainAddress)
-	fmt.Printf(" recipient_blockchain_address: %s\n", t.recipientBlockchainAddress)
-	fmt.Printf(" value:                        %.1f\n", t.chanvalue)
+	fmt.Printf(" sender_blockchain_address      %s\n", t.senderBlockchainAddress)
+	fmt.Printf(" recipient_blockchain_address   %s\n", t.recipientBlockchainAddress)
+	fmt.Printf(" value                          %.1f\n", t.value)
 }
 
 func (t *Transaction) MarshalJSON() ([]byte, error) {
@@ -31,6 +31,6 @@ func (t *Transaction) MarshalJSON() ([]byte, error) {
 	}{
 		Sender:    t.senderBlockchainAddress,
 		Recipient: t.recipientBlockchainAddress,
-		Value:     t.chanvalue,
+		Value:     t.value,
 	})
 }

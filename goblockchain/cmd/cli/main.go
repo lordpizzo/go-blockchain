@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"goblockchain/models/blockchain"
+	"goblockchain/models/block"
 	"goblockchain/models/wallet"
 	"log"
 )
@@ -19,7 +19,7 @@ func main() {
 
 	t := wallet.NewTransaction(walletA.PrivateKey(), walletA.PublicKey(), walletA.BlockchainAddress(), walletB.BlockchainAddress(), 1.0)
 
-	b := blockchain.NewBlockchain(walletM.BlockchainAddress())
+	b := block.NewBlockchain(walletM.BlockchainAddress(), 5000)
 	isAded := b.AddTransaction(walletA.BlockchainAddress(), walletB.BlockchainAddress(), 1.0, walletA.PublicKey(), t.GenerateSignature())
 
 	fmt.Println("Added?", isAded)
